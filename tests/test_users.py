@@ -74,6 +74,96 @@ def test_register_fail_without_username(user_data_register):
 
 
 @pytest.mark.django_db
+def test_register_fail_long_username():
+    request = {
+        'username': 'NewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtest',
+        'password': 123456,
+        'email': 'newtestuser@email.com',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_long_password():
+    request = {
+        'username': 'NewTestUser',
+        'password': 123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456,
+        'email': 'newtestuser@email.com',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_long_first_name():
+    request = {
+        'username': 'NewTestUser',
+        'password': 123456,
+        'email': 'newtestuser@email.com',
+        'first_name': 'NewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtestNewtest',
+        'last_name': 'User',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_empty_username():
+    request = {
+        'username': '',
+        'password': '123456',
+        'email': 'newtestuser@email.com',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_empty_password():
+    request = {
+        'username': 'NewTestUser',
+        'password': '',
+        'email': 'newtestuser@email.com',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_incorrect_email():
+    request = {
+        'username': 'NewTestUser',
+        'password': '123456',
+        'email': 'newtestuseremail.com',
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
+def test_register_fail_empty_request():
+    request = {
+    }
+    request_json = json.dumps(request)
+    response_from_url = client.post('/users/', data=request_json, content_type='application/json')
+
+    assert response_from_url.status_code == 400
+
+
+@pytest.mark.django_db
 def test_login_success():
     create_test_user()
     request = {
